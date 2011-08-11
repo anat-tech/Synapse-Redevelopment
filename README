@@ -1,0 +1,6 @@
+The Redevelopment of the Synapse database interface is broken into two 
+sections.
+
+1) Website access.
+
+2) REST/Http access for external services.

@@ -73,8 +73,8 @@ class user
                         if($this->updatePassword($pword, $email) == 200)
                         {
                              /* e-mail user new password */
-                             /* if e-mail fails, send it again*/
-                             mail($email, "Synapse password reset", "Your new password for synapse is: ".$email);
+                             if(mail($email, "Synapse password reset", "Your new password for synapse is: ".$email)) return 200;
+                             else return 409; //conflict
                         }
                 }
         }
@@ -111,10 +111,10 @@ class user
             }*/
             /* compares */
             if ($passwd == $passwd_in) {
-                echo "authenticated";
+                return 200;
             }
             else {
-                echo "failed";
+                return 401; //unauthorized
             }        
         }
 }
