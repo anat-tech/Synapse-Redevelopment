@@ -23,10 +23,17 @@ class user
         /* generate password */
         $pass = $this->generatePassword(8);
         /*generate salt */
-        $salt = $this->generatePassword(rand(6,254));    
+        $salt = $this->generatePassword(rand(6,254));   
+        $pass = sha1($salt.$pass);
         $profile = array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email, "salt"=>$salt, "passwd"=>sha1($salt.$pass));
         /*insert data*/
         $this->dbmsC->insert("people", $profile );
+        
+        /*send email*/
+        mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
+        /*debugging take a log */
+        file_put_contents("reg.log", "email: ".$email.", pass: ".$pass , FILE_APPEND);
+        
         return $profile;
     }
     

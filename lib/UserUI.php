@@ -47,8 +47,25 @@ class userUI {
     public static function loginForm() {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
-             "<p><label>Password: <input type=\"text\" name=\"pass\"></label></p>".PHP_EOL.
+             "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"login\"></label></p>".PHP_EOL.
+             "<p><input type=\"submit\" value=\"login\"></p>".PHP_EOL.
+             "</form>".PHP_EOL;
+    }
+    
+    static function register() {
+        if((isset($_POST['email'])) && (isset($_POST['fname'])) && (isset($_POST['lname']))) {
+            $this->user->register($fname, $lname, $email);
+        }
+        else {
+            echo "<p>Unable to register, email, first name and last name required!</p>";
+        }
+    }
+    public static function registerForm() {
+        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+             "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
+             "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
+             "<p><label><input type=\"hidden\" name=\"CMD\" value=\"register\"></label></p>".PHP_EOL.
              "<p><input type=\"submit\" value=\"login\"></p>".PHP_EOL.
              "</form>".PHP_EOL;
     }
