@@ -1,0 +1,100 @@
+<?php
+/* User class
+ * Use Cases: Login/Authentication, updatepassword, lostpassword, update information.
+ * 
+ */
+
+require_once('dbmsCog.php');
+
+class user
+{
+    protected $dbmsC;
+    
+        public function __construct()
+	{
+            $this->dbmsC = new dbmsCog();
+        }
+        
+
+        /* registerting people into the database */
+        function register($fname, $lname, $email) {
+            /*generate salt, and include it*/
+            $this->dbmsC->insert("people", array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email) );
+        }
+        
+        /* Basic people listing */
+        function listPeople() {
+                //$arry = array();
+                $result = $this->dbmsC->select("people", "firstname, lastname, email, url", "WHERE confirmed=1");
+                $list;
+                while ($row = mysql_fetch_assoc($result)) {
+                   $list .= $row['firstname'].", ".$row['lastname'].", ".$row['email'].", ".$row['url'].PHP_EOL;
+                }
+                return $list;
+        }
+        
+        /* function for updating a password where email=email */
+        function updatePassword($passwd, $email) {
+                /* hash password*/
+            
+                /* update password stored in database*/
+               $result = $this->dbmsC->update("people", "password", $passwd, "WHERE email=".$email);
+               return $result;
+        }
+ 
+        /* function for dealing with lost passwords */   
+        function lostPassword($email) {
+                $result = $this->dbmsC->select("people", "*", "WHERE email=".$email);
+                /* user is found */
+                if ($result != 402 || $result != 406 || $result != 503)
+                {
+                        /* generate password and update user*/
+                        $pword = generatePassword(10);
+                        /* on successfull update */
+                        if($this->updatePassword($pword, $email) == 200)
+                        {
+                             /* e-mail user new password */
+                             /* if e-mail fails, send it again*/
+                             mail($email, "Synapse password reset", "Your new password for synapse is: ".$email);
+                        }
+                        
+                }
+        }
+        
+        /* generates a random string of characters */
+        protected function generatePassword($digit) {
+                $out = "";
+                for ($digit = 0; $digit < 6; $digit++) {
+                    $out .= chr(rand(65,122));
+                }
+                return $out;
+        }
+        
+        /* hash and salt password, assumes salt is in database. */
+        protected function hashAndSaltPword($pword, $email) {
+            $salt = $this->dbmsC->select("people", "email, salt", "where email=\"".$email."\"");
+            $pword = sha1($salt.$pword);
+            return $pword;
+        }
+        
+        
+        /* compares the hashed password against the stored hash */
+        function authenticate($username, $passwd_in) {
+            /*generates password*/
+            $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
+            /* grabs stored password*/
+            $stored = $this->dbmsC->select("people", "email, passwd", "where email=\"".$email."\"");
+            /*while($row = mysql_fetch_array($stored)) {
+                $passwd = $row['passwd'];
+            }*/
+            /* compares */
+            if ($passwd == $passwd_in) {
+                echo "authenticated";
+            }
+            else {
+                echo "failed";
+            }
+                
+        }
+}
+?>

@@ -30,6 +30,13 @@ class user
         return $profile;
     }
     
+    function adjustCookie($email, $pass, $ip) {
+        $check = $this->dbmsC->select("people", "cookiehash", "where");
+        if((isset($pass)) && ($check == NULL)) {
+            echo "set cookie";
+        }
+    }
+    
     /* Basic people listing */
     function listPeople() {
         //$arry = array();
@@ -82,8 +89,9 @@ class user
         // on successfull update
         if($this->updatePassword($pword, $email) == 200)
         {
+            return $pword;
             // e-mail user new password
-            if(mail($email, "Synapse password reset", "Your new password for synapse is: ".$email)) return 200;
+            if(mail($email, "Synapse password reset", "Your new password for synapse is: ".$pword)) return 200;
             else return 409; //conflict
         }
     }

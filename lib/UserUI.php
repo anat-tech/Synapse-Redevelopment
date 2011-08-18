@@ -18,12 +18,21 @@ class userUI {
     public function __construct() {
         $this->user = new user();
     }
+    
+    private function checkCookie() {
+    
+    }
+    private function createCookie() {
+    
+    }
+    
 
     private function login() {
         if(($_POST['email']) && ($_POST['pass'])) {
             if($this->user->authenticate($_POST['email'], $_POST['pass']) == 200) {
                 //set cookie
                 //output stuff on success
+                $this->user->adjustCookie($_POST['email'], $_POST['pass']);
                 echo "Success";
             }
             else {
@@ -44,9 +53,9 @@ class userUI {
              "</form>".PHP_EOL;
     }
     
-    private function resetPass() {
+    static function resetPass() {
         if($_POST['email']) {
-            $this->user->resetPassword($_POST['email']);
+            echo $this->user->resetPassword($_POST['email']);
         }
     }
     

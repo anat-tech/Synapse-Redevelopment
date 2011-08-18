@@ -28,5 +28,9 @@ class webTools {
         error_reporting(E_ALL);
         ini_set('display_errors', '1');
     }
+    
+    public static function printCookies() {
+        print_r($_COOKIE);
+    }
 }
 ?>

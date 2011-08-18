@@ -1,0 +1,31 @@
+<?php 
+
+class dbmsCog {
+
+        /* header declarations */
+        protected $resource;
+        protected $mysql_username = "synapse_user";
+        protected $mysql_pass = "anatpass";
+                
+        /* for making connections to the database */
+        function connect() {
+                $this->resource = mysql_connect ('localhost', $this->mysql_username, $this->mysql_anatpass);
+                /* returns if the connection was made, not the resource itself */
+                if ($this->resource) return true;
+                else return false;
+        }
+        
+        /* for closing connections to the database */
+        function disconnect() {
+               return mysql_close($this->resource);
+        }
+        
+        /* for inserting a row */
+        function insertRow($table, $values[]) {
+        }
+        
+        public function test() {
+                return "yay";
+        }
+}
+?>
