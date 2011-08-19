@@ -24,7 +24,7 @@ class userUI {
     
     }
     private function createCookie() {
-    
+        $this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR']);
     }
     
 
@@ -32,8 +32,7 @@ class userUI {
         if(($_POST['email']) && ($_POST['pass'])) {
             if($this->user->authenticate($_POST['email'], $_POST['pass']) == 200) {
                 //set cookie
-                //output stuff on success
-                //$this->user->adjustCookie($_POST['email'], $_POST['pass']);
+                $this->createCookie();
                 echo "Success";
             }
             else {

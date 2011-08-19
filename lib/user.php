@@ -33,17 +33,32 @@ class user
         
             /*send email*/
             //mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
-            /*debugging take a log */
-        //file_put_contents("reg.log", "email: ".$email.", pass: ".$pass , FILE_APPEND);
+            /*debugging show pass */
         echo "</h4>".$pass."<h4>";
         
         return $profile;
     }
     
     function adjustCookie($email, $pass, $ip) {
-        $check = $this->dbmsC->select("people", "cookiehash", "where");
+        /* authenticate again, just incase */
+        if(!($this->authenticate($email, $pass))) return false;
+        //gets the current cookie
+        $check = $this->dbmsC->select("people", "cookiehash", "where email='".$email."'");
+        $check = mysql_fetch_assoc($check);
+        $check = $check['cookiehash'];
+        
+        //checks if cookie has been set, if not, create cookie!
         if((isset($pass)) && ($check == NULL)) {
-            echo "set cookie";
+            /* create random data for the cookie */
+            $cookiesalt = $this->generatePassword(rand(8,12));
+            
+            //generate salted cookie data; note the lack of sensitive information used.
+            $saltedcookie = sha1($cookiesalt.$ip.$_SERVER['HTTP_USER_AGENT']);
+            
+            $this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
+            $this->dbmsC->update("people", "cookiesalt", $cookiesalt, "where email='".$email."'");
+            setcookie("synapse-valve", $saltedcookie, time()+3600, "/", $_SERVER['SERVER_NAME']);
+            return 200;
         }
     }
     
@@ -107,15 +122,13 @@ class user
     /* generates a random string of characters */
     protected function generatePassword($max) {
         $out = "";
-        
         //0-3 = uppercase, 3-6 = lowercase, 6-12 = numbers
         //50/50 = no bias towards letters or numbers;
-        
         for ($digit = 0; $digit < $max; $digit++) {
             $dice = rand(1,12);
             if( $dice < 3 )
                $out .= chr(rand(65,90));
-            else if (dice < 6){
+            else if ($dice < 6){
                 $out .= chr(rand(97, 122));
             }
             else { //numbers
@@ -144,7 +157,6 @@ class user
         $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
         /* grabs stored password*/
         $passwd = $this->dbmsC->select("people", "email,passwd", "where email='".$email."'");
-        //echo "passwd".var_dump($passwd);
         $passwd = mysql_fetch_assoc($passwd);
         $passwd = $passwd['passwd'];
         
