@@ -56,7 +56,7 @@ class userUI {
     
     private function register() {
         if((isset($_POST['email'])) && (isset($_POST['fname'])) && (isset($_POST['lname']))) {
-            if ($this->user->register($_POST['fname'], $_POST['lname'], $_POST['email']) == 409) {
+            if ($this->user->register($_POST['fname'], $_POST['lname'], $_POST['email'], $_POST['pass']) == 409) {
                 echo "<p>Error: email already registered.</p>";
             }
         }
