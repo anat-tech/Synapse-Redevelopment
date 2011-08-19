@@ -72,7 +72,7 @@ class dbmsCog
             /* no errors */
             else
             {
-                //$this->rowCount = (mysql_num_rows($result));
+                $this->rowCount = (mysql_num_rows($result));
                 return $result;
             }
             $this->disconnect();

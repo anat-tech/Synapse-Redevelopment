@@ -128,10 +128,11 @@ class user
     /* hash and salt password, assumes salt is in database. */
     protected function hashAndSaltPword($pword, $email) {
         $salt = $this->dbmsC->select("people", "email, salt", "WHERE email='".$email."'");
-        //$salt = mysql_fetch_assoc($salt);
+        
+        $salt = mysql_fetch_assoc($salt);
         if($salt) {
-            echo $salt;
-            //$salt = $salt['salt'];
+           $salt;
+            $salt = $salt['salt'];
             $pword = sha1($salt.$pword);
         }
         return $pword;
@@ -142,10 +143,10 @@ class user
         /*generates password*/
         $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
         /* grabs stored password*/
-        $passwd = $this->dbmsC->select("people", "email, passwd", "where email='".$email."'");
-        echo "passwd";
-        //$passwd = mysql_fetch_assoc($passwd);
-       // $passwd = $passwd['passwd'];
+        $passwd = $this->dbmsC->select("people", "email,passwd", "where email='".$email."'");
+        //echo "passwd".var_dump($passwd);
+        $passwd = mysql_fetch_assoc($passwd);
+        $passwd = $passwd['passwd'];
         
         /* compares */
         if ($passwd == $passwd_in) {
