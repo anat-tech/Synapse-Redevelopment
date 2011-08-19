@@ -131,10 +131,8 @@ class dbmsCog
     }
     
     function recordExists($table, $colum, $value) {
-        $this->connect();
         $result = $this->query("SELECT * FROM ".$table." WHERE ".$colum."='".$value."'");
         $rows = mysql_num_rows($result);
-        $this->disconnect();
         
         if($rows) return true ;
         else return false;
@@ -143,7 +141,6 @@ class dbmsCog
     /* select function */
     function select($table, $colums, $conditions)
     {
-        $this->connect();
         /* require these parameters*/
         if(isset($table) && isset($colums))
         {
@@ -154,16 +151,13 @@ class dbmsCog
             /* run query*/ 
             $outcome = $this->query($query);
             if($this->rowCount > 0) {
-                $this->disconnect();
                 return $outcome;
             }
             else {
-                $this->disconnect();
                 return 404;
             } 
         }
         else {
-            $this->disconnect();
             return 406; //Not Acceptable
         }
     }
@@ -180,7 +174,9 @@ class dbmsCog
             /* on success */
             if($outcome == 1)  return 200;       
             /*on fail*/
-            else return $outcome;
+            else {
+                return $outcome;
+            }
         }
         else return 406; //Not Acceptable
     }
