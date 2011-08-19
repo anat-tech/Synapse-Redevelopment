@@ -118,7 +118,7 @@ class user
             else if (dice < 6){
                 $out .= chr(rand(97, 122));
             }
-            else {
+            else { //numbers
                 $out .= chr(rand(48,57));
             }
         }
