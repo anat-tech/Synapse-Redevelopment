@@ -18,7 +18,7 @@ class dbmsCog
     protected $rowCount;
     
     /* for making connections to the database */
-    function connect()
+    private function connect()
     {
         $this->link = mysql_connect ('localhost', $this->mysql_username, $this->mysql_pass);
         /* returns if the connection was made, not the resource itself */
@@ -46,14 +46,14 @@ class dbmsCog
     }
     
     /* for closing connections to the database */
-    function disconnect()
+    private function disconnect()
     {
            return mysql_close($this->link);
     }
     
     
     /* function for executing queries on the dbms */
-    protected function query($query)
+    private function query($query)
     {
         /* make connection */
         if($this->connect())
