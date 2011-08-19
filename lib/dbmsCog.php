@@ -63,7 +63,6 @@ class dbmsCog
             
             /* run query*/
             $result = mysql_query($query, $this->link);
-            var_dump($result);
             /* 400 Bad Request (probably wrong syntax) */
             if(!$result)
             {
