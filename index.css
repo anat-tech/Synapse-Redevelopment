@@ -1,0 +1,31 @@
+/* 
+    Document   : index.css
+    Created on : Aug 19, 2011, 5:18:03 PM
+    Author     : cameron
+    Description:
+        Purpose of the stylesheet follows.
+just to make the testing look a little nicer
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+form {
+    border:0px black none;
+    border-radius:0.75em;
+    padding:0.25em;
+    padding-left: 0.75em; padding-right: 0.75em;
+    background-color:#333333;
+    color:#DDDDDD;
+    width:42em;
+    margin:auto;
+    margin-top: 2em;
+    box-shadow:0em 0em 2em #333333;
+}
+

@@ -29,7 +29,8 @@ class userUI {
         }
     }
     private function createCookie() {
-        echo "<p>".$this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR'])."</p>";
+        $res = $this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR']);
+        if($res != 200) echo "<p>".$res."</p>";
     }
     
 
@@ -51,7 +52,8 @@ class userUI {
     /*outputs a login form on request */
     public function loginForm() {
         if(!($this->user->checkCookie())) {
-        echo "<h2>Login</h2>".PHP_EOL."<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+             "<h2>Login</h2>".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"login\"></label></p>".PHP_EOL.
@@ -71,7 +73,8 @@ class userUI {
         }
     }
     public static function registerForm() {
-        echo "<h3>Register</h3>".PHP_EOL."<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+             "<h3>Register</h3>".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Firstname: <input type=\"text\" name=\"fname\"></label></p>".PHP_EOL.
              "<p><label>Surname: <input type=\"text\" name=\"lname\"></label></p>".PHP_EOL.
@@ -130,7 +133,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     webTools::cleanArray($_POST);
     $ui = new userUI;
     $ui->postHandle();
-    $ui->checkCookie();
+    //$ui->checkCookie();
 }
 //
 /*END*/

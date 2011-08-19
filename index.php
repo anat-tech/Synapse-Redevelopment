@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Synapse Redevelopment Template Example</title>  
+    <title>Synapse Redevelopment Template Example</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <?php include 'lib/UserUI.php'; include 'lib/webTools.php'; $ui = new UserUI; ?>
