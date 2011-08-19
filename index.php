@@ -10,6 +10,7 @@
     <?php UserUI::loginForm(); ?>
     <h3>Register</h3>
     <?php UserUI::registerForm(); ?>
+    <?php webtools::printCookies(); ?>
     
 </body>
 </html>

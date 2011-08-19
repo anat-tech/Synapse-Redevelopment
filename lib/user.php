@@ -9,6 +9,7 @@ require_once('dbmsCog.php');
 class user
 {
     protected $dbmsC;
+    protected $cookietimeout = 3600; //3600 = 1hour
     
     public function __construct()
     {
@@ -47,19 +48,39 @@ class user
         $check = mysql_fetch_assoc($check);
         $check = $check['cookiehash'];
         
+        //gets the cookie stored time
+        $scktime = $this->dbmsC->select("people", "cookietime", "where email='".$email."'");
+        $scktime = mysql_fetch_assoc($scktime);
+        $scktime = $scktime['cookietime'];
+        
+        /* delete cookie data if cookie has timed out */
+        if(time() - $scktime < $this->cookietimeout){
+            $this->dbmsC->update("people", "cookiehash", NULL, "where email='".$email."'");
+        }
+        
         //checks if cookie has been set, if not, create cookie!
-        if((isset($pass)) && ($check == NULL)) {
+        if($check == NULL) {
             /* create random data for the cookie */
             $cookiesalt = $this->generatePassword(rand(8,12));
             
             //generate salted cookie data; note the lack of sensitive information used.
             $saltedcookie = sha1($cookiesalt.$ip.$_SERVER['HTTP_USER_AGENT']);
             
+            ///store cookie data in database for verfication later.
+            //change these to be one query for optimisation
             $this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
             $this->dbmsC->update("people", "cookiesalt", $cookiesalt, "where email='".$email."'");
-            setcookie("synapse-valve", $saltedcookie, time()+3600, "/", $_SERVER['SERVER_NAME']);
+            $this->dbmsC->update("people", "cookietime", time(), "where email='".$email."'"); 
+            setcookie("synapse-valve", $saltedcookie, time()+$cookietimeout, "/", $_SERVER['SERVER_NAME']);
             return 200;
         }
+        else if(!($this->checkcookie())) {
+            $this->dbmsC->update("people", "cookiehash", NULL, "where email='".$email."'");
+        }
+    }
+    
+    function checkCookie() {
+        return false;
     }
     
     /* Basic people listing */
