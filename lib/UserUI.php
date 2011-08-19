@@ -20,8 +20,13 @@ class userUI {
         webTools::phpErrorsOn();
     }
     
-    private function checkCookie() {
-    
+    public function checkCookie() {
+        if($this->user->checkCookie()) {
+            echo "<p>logged in</p>";
+        }
+        else {
+            echo "<p>not logged in</p>";
+        }
     }
     private function createCookie() {
         $this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR']);
@@ -118,10 +123,13 @@ class userUI {
 
 /* START 
 /* enforce posting method */
+
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     webTools::cleanArray($_POST);
     $ui = new userUI;
     $ui->postHandle();
+    $ui->checkCookie();
 }
+//
 /*END*/
 ?>

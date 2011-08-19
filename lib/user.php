@@ -9,6 +9,7 @@ require_once('dbmsCog.php');
 class user
 {
     protected $dbmsC;
+    protected $cookiename = "synapse-valve";
     protected $cookietimeout = 3600; //3600 = 1hour
     
     public function __construct()
@@ -68,18 +69,33 @@ class user
             
             ///store cookie data in database for verfication later.
             //change these to be one query for optimisation
+            if( setcookie($this->cookiename, $saltedcookie, time()+$this->cookietimeout, "/", $_SERVER['SERVER_NAME'])) {
             $this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
             $this->dbmsC->update("people", "cookiesalt", $cookiesalt, "where email='".$email."'");
             $this->dbmsC->update("people", "cookietime", time(), "where email='".$email."'"); 
-            setcookie("synapse-valve", $saltedcookie, time()+$cookietimeout, "/", $_SERVER['SERVER_NAME']);
+            }
             return 200;
         }
         else if(!($this->checkcookie())) {
             $this->dbmsC->update("people", "cookiehash", NULL, "where email='".$email."'");
+            return "Warning: previous sesssion existed, someone may have been logged in as you. Therefore your account has been logged out";
         }
+        //if user is logged in already
+        return "You were logged in already.";
     }
     
+    //this should occur everytime a sensitive page is loaded, thus it should be made very effecient
     function checkCookie() {
+        print_r($_COOKIE);
+        if(isset($_COOKIE[$this->cookiename])) { //if a cookie is set
+        $check = $this->dbmsC->select("people", "cookiehash,cookiesalt", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
+        if(($check == 404) || ($check == 406)) return false;
+        //if cookie exists, sanity check.
+        
+        $cookiesalt = mysql_fetch_assoc($check);
+        $cookiesalt = $cookiesalt['cookiesalt'];
+        return (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]);
+        }
         return false;
     }
     
