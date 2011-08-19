@@ -22,14 +22,14 @@ class userUI {
     
     public function checkCookie() {
         if($this->user->checkCookie()) {
-            echo "<p>logged in</p>";
+            echo "<p>logged in banner/stuff.</p>";
         }
         else {
             echo "<p>not logged in</p>";
         }
     }
     private function createCookie() {
-        $this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR']);
+        echo "<p>".$this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR'])."</p>";
     }
     
 
@@ -38,7 +38,7 @@ class userUI {
             if($this->user->authenticate($_POST['email'], $_POST['pass']) == 200) {
                 //set cookie
                 $this->createCookie();
-                echo "Success";
+                //echo "Success";
             }
             else {
                 echo "Authentication failed";
@@ -49,13 +49,15 @@ class userUI {
         }
     }
     /*outputs a login form on request */
-    public static function loginForm() {
-        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+    public function loginForm() {
+        if(!($this->user->checkCookie())) {
+        echo "<h2>Login</h2>".PHP_EOL."<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"login\"></label></p>".PHP_EOL.
              "<p><input type=\"submit\" value=\"login\"></p>".PHP_EOL.
              "</form>".PHP_EOL;
+        }
     }
     
     private function register() {
@@ -69,7 +71,7 @@ class userUI {
         }
     }
     public static function registerForm() {
-        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+        echo "<h3>Register</h3>".PHP_EOL."<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Firstname: <input type=\"text\" name=\"fname\"></label></p>".PHP_EOL.
              "<p><label>Surname: <input type=\"text\" name=\"lname\"></label></p>".PHP_EOL.

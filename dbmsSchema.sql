@@ -71,6 +71,9 @@ gallery_image VARCHAR (1024),
 salt VARCHAR (255),
 passwd VARCHAR (1024),
 status VARCHAR (1024),
+cookiehash VARCHAR (100) NOT NULL DEFAULT 'nudda',
+cookietime VARCHAR (20),
+cookiesalt VARCHAR (30),
 CONSTRAINT `region` FOREIGN KEY region REFERENCES regions(id),
 PRIMARY KEY (id)
 );

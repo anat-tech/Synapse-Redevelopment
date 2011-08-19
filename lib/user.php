@@ -60,7 +60,7 @@ class user
         }
         
         //checks if cookie has been set, if not, create cookie!
-        if($check == NULL) {
+        if($check == "nudda") {
             /* create random data for the cookie */
             $cookiesalt = $this->generatePassword(rand(8,12));
             
@@ -77,7 +77,7 @@ class user
             return 200;
         }
         else if(!($this->checkcookie())) {
-            $this->dbmsC->update("people", "cookiehash", NULL, "where email='".$email."'");
+            $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
             return "Warning: previous sesssion existed, someone may have been logged in as you. Therefore your account has been logged out";
         }
         //if user is logged in already
@@ -86,15 +86,13 @@ class user
     
     //this should occur everytime a sensitive page is loaded, thus it should be made very effecient
     function checkCookie() {
-        print_r($_COOKIE);
         if(isset($_COOKIE[$this->cookiename])) { //if a cookie is set
-        $check = $this->dbmsC->select("people", "cookiehash,cookiesalt", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
-        if(($check == 404) || ($check == 406)) return false;
-        //if cookie exists, sanity check.
-        
-        $cookiesalt = mysql_fetch_assoc($check);
-        $cookiesalt = $cookiesalt['cookiesalt'];
-        return (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]);
+            $check = $this->dbmsC->select("people", "cookiehash,cookiesalt", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
+            if(($check == 404) || ($check == 406)) return false;
+            //if cookie exists, sanity check.
+            $cookiesalt = mysql_fetch_assoc($check);
+            $cookiesalt = $cookiesalt['cookiesalt'];
+            return (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]);
         }
         return false;
     }
