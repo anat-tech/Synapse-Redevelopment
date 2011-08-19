@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Synapse Redevelopment Template Example</title>
-    
+    <title>Synapse Redevelopment Template Example</title>  
 </head>
 <body>
-    <h2>login</h2>
-    <?php include_once 'UserUI.php'; include_once 'webTools.php' ?>
+    <?php include 'lib/UserUI.php'; include 'lib/webTools.php'; ?>
+    <?php webTools::phpErrorsOn(); ?>
+    <h2>Login</h2>
     <?php UserUI::loginForm(); ?>
-    <?php echo UserUI::resetPass('cameron@anat.org.au'); ?>
-    <h4><?php webTools::printCookies(); ?></h4>
+    <h3>Register</h3>
+    <?php UserUI::registerForm(); ?>
     
 </body>
 </html>

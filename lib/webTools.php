@@ -4,6 +4,7 @@
  * @author cameron
  * Just a collection of tools to help with processing of user data, etc
  */
+if(!(class_exists('webTools'))) {
 class webTools {
     public static function cleanArray() {
         foreach ($arr as $key => $value) {
@@ -32,5 +33,6 @@ class webTools {
     public static function printCookies() {
         print_r($_COOKIE);
     }
+}
 }
 ?>

@@ -9,14 +9,15 @@
  * @copyright Australian Network for Art and Technology 2011
  */
 
-include_once('user.php');
-include_once('webTools.php');
+require_once ('user.php');
+require_once('webTools.php');
 
 class userUI {
     private $user;
     
     public function __construct() {
         $this->user = new user();
+        webTools::phpErrorsOn();
     }
     
     private function checkCookie() {
@@ -32,7 +33,7 @@ class userUI {
             if($this->user->authenticate($_POST['email'], $_POST['pass']) == 200) {
                 //set cookie
                 //output stuff on success
-                $this->user->adjustCookie($_POST['email'], $_POST['pass']);
+                //$this->user->adjustCookie($_POST['email'], $_POST['pass']);
                 echo "Success";
             }
             else {
@@ -40,7 +41,7 @@ class userUI {
             }
         }
         else {
-            echo "Login Error :: email or password missing. Web developer -> check form data!";
+            echo "Login Error :: email or password missing.";
         }
     }
     /*outputs a login form on request */
@@ -53,9 +54,11 @@ class userUI {
              "</form>".PHP_EOL;
     }
     
-    static function register() {
+    private function register() {
         if((isset($_POST['email'])) && (isset($_POST['fname'])) && (isset($_POST['lname']))) {
-            $this->user->register($fname, $lname, $email);
+            if ($this->user->register($_POST['fname'], $_POST['lname'], $_POST['email']) == 409) {
+                echo "<p>Error: email already registered.</p>";
+            }
         }
         else {
             echo "<p>Unable to register, email, first name and last name required!</p>";
@@ -64,9 +67,11 @@ class userUI {
     public static function registerForm() {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
+             "<p><label>Firstname: <input type=\"text\" name=\"fname\"></label></p>".PHP_EOL.
+             "<p><label>Surname: <input type=\"text\" name=\"lname\"></label></p>".PHP_EOL.
              "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"register\"></label></p>".PHP_EOL.
-             "<p><input type=\"submit\" value=\"login\"></p>".PHP_EOL.
+             "<p><input type=\"submit\" value=\"Register\"></p>".PHP_EOL.
              "</form>".PHP_EOL;
     }
     
@@ -82,9 +87,15 @@ class userUI {
             switch($_POST['CMD']) {
                 case "login": {
                     $this->login();
+                    break;
                 }
                 case "resetPass": {
                     $this->resetPass();
+                    break;
+                }
+                case "register" : {
+                    $this->register();
+                    break;
                 }
             }
         }

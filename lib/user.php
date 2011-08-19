@@ -24,7 +24,7 @@ class user
         $pass = $this->generatePassword(8);
         /*generate salt */
         $salt = $this->generatePassword(rand(6,254));   
-        $pass = sha1($salt.$pass);
+        //$pass = sha1($salt.$pass);
         $profile = array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email, "salt"=>$salt, "passwd"=>sha1($salt.$pass));
         /*insert data*/
         $this->dbmsC->insert("people", $profile );
@@ -32,7 +32,8 @@ class user
         /*send email*/
         mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
         /*debugging take a log */
-        file_put_contents("reg.log", "email: ".$email.", pass: ".$pass , FILE_APPEND);
+        //file_put_contents("reg.log", "email: ".$email.", pass: ".$pass , FILE_APPEND);
+        echo "</h4>".$pass."<h4>";
         
         return $profile;
     }
@@ -62,12 +63,10 @@ class user
             if(!(empty($passwd))) {
                 $this->updatePassword ($passwd, $email);
             }
-            
             /* update email if there is a new one */
             if(!(empty($newemail))) {
                 $this->dbmsC->update("people", "email", $newemail, "WHERE email=".$email);
             }
-            
         }
         else {
             return 401; //unauthorised
@@ -115,9 +114,13 @@ class user
     /* hash and salt password, assumes salt is in database. */
     protected function hashAndSaltPword($pword, $email) {
         $salt = $this->dbmsC->select("people", "email, salt", "WHERE email='".$email."'");
-        $salt = mysql_fetch_assoc($salt);
-        $salt = $salt['salt'];
+        //$salt = mysql_fetch_assoc($salt);
+        if($salt) {
+        echo $salt;
+        //$salt = $salt['salt'];
         $pword = sha1($salt.$pword);
+        }
+        else echo "blargh";
         return $pword;
     }
     
@@ -126,9 +129,11 @@ class user
         /*generates password*/
         $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
         /* grabs stored password*/
+;
         $passwd = $this->dbmsC->select("people", "email, passwd", "where email=\"".$email."\"");
-        $passwd = mysql_fetch_assoc($passwd);
-        $passwd = $passwd['passwd'];
+        echo "passwd";
+        //$passwd = mysql_fetch_assoc($passwd);
+       // $passwd = $passwd['passwd'];
         
         /* compares */
         if ($passwd == $passwd_in) {

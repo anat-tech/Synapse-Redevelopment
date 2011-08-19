@@ -18,7 +18,7 @@ class dbmsCog
     protected $rowCount;
     
     /* for making connections to the database */
-    protected function connect()
+    function connect()
     {
         $this->link = mysql_connect ('localhost', $this->mysql_username, $this->mysql_pass);
         /* returns if the connection was made, not the resource itself */
@@ -46,7 +46,7 @@ class dbmsCog
     }
     
     /* for closing connections to the database */
-    protected function disconnect()
+    function disconnect()
     {
            return mysql_close($this->link);
     }
@@ -63,7 +63,7 @@ class dbmsCog
             
             /* run query*/
             $result = mysql_query($query, $this->link);
-            
+            var_dump($result);
             /* 400 Bad Request (probably wrong syntax) */
             if(!$result)
             {
@@ -73,7 +73,7 @@ class dbmsCog
             /* no errors */
             else
             {
-                $this->rowCount = (mysql_num_rows($result));
+                //$this->rowCount = (mysql_num_rows($result));
                 return $result;
             }
             $this->disconnect();
@@ -143,6 +143,7 @@ class dbmsCog
     /* select function */
     function select($table, $colums, $conditions)
     {
+        $this->connect();
         /* require these parameters*/
         if(isset($table) && isset($colums))
         {
@@ -153,13 +154,18 @@ class dbmsCog
             /* run query*/ 
             $outcome = $this->query($query);
             if($this->rowCount > 0) {
+                $this->disconnect();
                 return $outcome;
             }
             else {
+                $this->disconnect();
                 return 404;
             } 
         }
-        else return 406; //Not Acceptable
+        else {
+            $this->disconnect();
+            return 406; //Not Acceptable
+        }
     }
     
     /* update function*/
