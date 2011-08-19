@@ -15,23 +15,25 @@ class user
         $this->dbmsC = new dbmsCog();
     }
     /* registerting people into the database */
-    function register($fname, $lname, $email) {    
+    function register($fname, $lname, $email,$pass) {    
         // check email does not exist 
         if($this->dbmsC->recordExists("people", "email", $email)) {
             return 409; //conflict - record exists
-        }     
-        /* generate password */
-        $pass = $this->generatePassword(8);
-        /*generate salt */
-        $salt = $this->generatePassword(rand(6,254));   
-        //$pass = sha1($salt.$pass);
-        $profile = array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email, "salt"=>$salt, "passwd"=>sha1($salt.$pass));
-        /*insert data*/
-        $this->dbmsC->insert("people", $profile );
+        }
+        if(!(isset($pass))) {
+            /* generate password */
+            $pass = $this->generatePassword(8);
+        }
+            /*generate salt */
+            $salt = $this->generatePassword(rand(6,254));   
+            
+       $profile = array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email, "salt"=>$salt, "passwd"=>sha1($salt.$pass));
+       /*insert data*/
+       $this->dbmsC->insert("people", $profile );
         
-        /*send email*/
-        mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
-        /*debugging take a log */
+            /*send email*/
+            //mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
+            /*debugging take a log */
         //file_put_contents("reg.log", "email: ".$email.", pass: ".$pass , FILE_APPEND);
         echo "</h4>".$pass."<h4>";
         
@@ -103,10 +105,22 @@ class user
     }
     
     /* generates a random string of characters */
-    protected function generatePassword($digit) {
+    protected function generatePassword($max) {
         $out = "";
-        for ($digit = 0; $digit < 6; $digit++) {
-            $out .= chr(rand(65,122));
+        
+        //0-3 = uppercase, 3-6 = lowercase, 6-12 = numbers
+        //50/50 = no bias towards letters or numbers;
+        
+        for ($digit = 0; $digit < $max; $digit++) {
+            $dice = rand(1,12);
+            if( $dice < 3 )
+               $out .= chr(rand(65,90));
+            else if (dice < 6){
+                $out .= chr(rand(97, 122));
+            }
+            else {
+                $out .= chr(rand(48,57));
+            }
         }
         return $out;
     }
@@ -116,11 +130,10 @@ class user
         $salt = $this->dbmsC->select("people", "email, salt", "WHERE email='".$email."'");
         //$salt = mysql_fetch_assoc($salt);
         if($salt) {
-        echo $salt;
-        //$salt = $salt['salt'];
-        $pword = sha1($salt.$pword);
+            echo $salt;
+            //$salt = $salt['salt'];
+            $pword = sha1($salt.$pword);
         }
-        else echo "blargh";
         return $pword;
     }
     
@@ -129,8 +142,7 @@ class user
         /*generates password*/
         $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
         /* grabs stored password*/
-;
-        $passwd = $this->dbmsC->select("people", "email, passwd", "where email=\"".$email."\"");
+        $passwd = $this->dbmsC->select("people", "email, passwd", "where email='".$email."'");
         echo "passwd";
         //$passwd = mysql_fetch_assoc($passwd);
        // $passwd = $passwd['passwd'];
