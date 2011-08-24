@@ -67,10 +67,8 @@ class userUI {
     
     private function logout() {
         //remove cookie
-        //unset($_COOKIE['synapse-valve']);
         $email = $this->user->checkCookie();
         $this->user->removeCookie($email);
-        
         //header("refresh:3;url=".webTools::currentURL());
     }
     public function logoutForm() {
@@ -91,9 +89,10 @@ class userUI {
             echo "<p>Unable to register, email, first name and last name required!</p>";
         }
     }
-    public static function registerForm() {
+    public function registerForm() {
+        if(($this->user->checkCookie())) return;
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
-             "<h3>Register</h3>".PHP_EOL.
+             "<h2>Register</h2>".PHP_EOL.
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Firstname: <input type=\"text\" name=\"fname\"></label></p>".PHP_EOL.
              "<p><label>Surname: <input type=\"text\" name=\"lname\"></label></p>".PHP_EOL.
@@ -141,6 +140,7 @@ class userUI {
     public function updateCredentialsForm() {
         if(($this->user->checkCookie())) {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+              "<h2>Update Credentials</h2>".PHP_EOL.
               "<p><label>Current Email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
               "<p><label>Current Password: <input type=\"text\" name=\"pass\"></label></p>".PHP_EOL.
               "<p><label>* leave new fields blank to not change.</label></p>".PHP_EOL.
