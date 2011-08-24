@@ -55,7 +55,7 @@ class user
         
         /* delete cookie data if cookie has timed out */
         if(time() - $cookietime < $this->cookietimeout){
-            $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
+            $this->removeCookie($email);
         }
         
         //checks if cookie has been set, if not, create cookie!
@@ -95,6 +95,12 @@ class user
             else return false;
         }
         return false;
+    }
+    
+    function removeCookie($email) {
+        setcookie("synapse-valve", "", time() - 60000);
+        $_COOKIE['synapse-valve'] = "";
+        $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
     }
     
     /* Basic people listing */
