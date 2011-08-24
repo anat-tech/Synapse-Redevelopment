@@ -21,8 +21,9 @@ class userUI {
     }
     
     public function checkCookie() {
-        if($this->user->checkCookie()) {
-            echo "<p>logged in banner/stuff.</p>";
+        $user = $this->user->checkCookie();
+        if($user) {
+            echo $user;
         }
         else {
             echo "<p>not logged in</p>";
@@ -31,22 +32,24 @@ class userUI {
     private function createCookie() {
         $res = $this->user->adjustCookie($_POST['email'], $_POST['pass'], $_SERVER['REMOTE_ADDR']);
         if($res != 200) echo "<p>".$res."</p>";
+        else header("Location: ".webTools::currentURL());
     }
     
 
     private function login() {
         if(($_POST['email']) && ($_POST['pass'])) {
             if($this->user->authenticate($_POST['email'], $_POST['pass']) == 200) {
-                //set cookie
+                //set cookie & refresh page
                 $this->createCookie();
+                
                 //echo "Success";
             }
             else {
-                echo "Authentication failed";
+                echo "<p>Authentication failed</p>";
             }
         }
         else {
-            echo "Login Error :: email or password missing.";
+            echo "<p>Login Error :: email or password missing.</p>";
         }
     }
     /*outputs a login form on request */
@@ -111,7 +114,9 @@ class userUI {
     }
     public function updateCredentials() {
         //check user is logged in
-        //$this->user->updateCredentials($oldpass, $passwd, $email, $newemail)
+        if($this->checkCookie())
+            if($this->user->authenticate($_POST['email'], $_POST['pass'])) //check authentication again
+                $this->user->updateCredentials($oldpass, $passwd, $email, $newemail); //update
     }
     public static function updateCredentialsForm() {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
@@ -123,7 +128,7 @@ class userUI {
               "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateCredentials\"></label></p>".PHP_EOL.
               "<p><label><input type=\"submit\" value=\"update\"</label></p>".PHP_EOL.         
               "</form>".PHP_EOL;
-    }
+    }    
 }
 
 /* START 
