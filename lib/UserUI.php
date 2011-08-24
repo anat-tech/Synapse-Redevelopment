@@ -65,6 +65,22 @@ class userUI {
         }
     }
     
+    private function logout() {
+        //remove cookie
+        //unset($_COOKIE['synapse-valve']);
+        $email = $this->user->checkCookie();
+        $this->user->removeCookie($email);
+        
+        //header("refresh:3;url=".webTools::currentURL());
+    }
+    public function logoutForm() {
+        if(($this->user->checkCookie())) {
+            echo "<form action=\"".webTools::currentURL()."\" method=\"post\">".PHP_EOL.
+                 "<label><input type=\"submit\" name=\"CMD\" value=\"logout\"></label>".PHP_EOL.   
+                 "</form>".PHP_EOL;
+        }
+    }
+    
     private function register() {
         if((isset($_POST['email'])) && (isset($_POST['fname'])) && (isset($_POST['lname']))) {
             if ($this->user->register($_POST['fname'], $_POST['lname'], $_POST['email'], $_POST['pass']) == 409) {
@@ -101,6 +117,10 @@ class userUI {
                     $this->login();
                     break;
                 }
+                case "logout": {
+                    $this->logout();
+                    break;
+                }
                 case "resetPass": {
                     $this->resetPass();
                     break;
@@ -112,23 +132,25 @@ class userUI {
             }
         }
     }
-    public function updateCredentials() {
+    private function updateCredentials() {
         //check user is logged in
         if($this->checkCookie())
             if($this->user->authenticate($_POST['email'], $_POST['pass'])) //check authentication again
                 $this->user->updateCredentials($oldpass, $passwd, $email, $newemail); //update
     }
-    public static function updateCredentialsForm() {
+    public function updateCredentialsForm() {
+        if(($this->user->checkCookie())) {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
               "<p><label>Current Email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
               "<p><label>Current Password: <input type=\"text\" name=\"pass\"></label></p>".PHP_EOL.
-              "<p><label>*leave 'new' fields blank to not change.</label></p>".PHP_EOL.
+              "<p><label>* leave new fields blank to not change.</label></p>".PHP_EOL.
               "<p><label>New Email: <input type=\"text\" name=\"newemail\"></label></p>".PHP_EOL.
               "<p><label>New password: <input type=\"text\" name=\"newpass\"></label></p>".PHP_EOL.
               "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateCredentials\"></label></p>".PHP_EOL.
               "<p><label><input type=\"submit\" value=\"update\"</label></p>".PHP_EOL.         
               "</form>".PHP_EOL;
-    }    
+        }
+    }
 }
 
 /* START 
