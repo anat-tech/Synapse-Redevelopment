@@ -10,8 +10,9 @@
     <?php $ui->logoutForm(); ?>
     <?php $ui->updateCredentialsForm(); ?>
     <?php $ui->registerForm(); ?>
+    <?php $ui->updateProfileForm(); ?>
     <form>
-        <p><label><input type="submit" value="Home"></label></p>
+        <p><label><input type="submit" class="button" value="Home"></label></p>
         <label>You are logged in as: <?php $ui->checkCookie() ?></label>
         <p>Current cookie: <?php webTools::printCookies(); ?></p> 
     </form>

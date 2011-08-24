@@ -189,6 +189,13 @@ class user
         return $out;
     }
     
+    //gets the full profile via email
+    function getProfile($email) {
+        $out = $this->dbmsC->select("people", "firstname,lastname,email,email2,peopleStatement,url,image,image_caption,region,gallery_image,people_status", "where email='".$email."'");
+        $out = mysql_fetch_assoc($out);
+        return $out;
+    }
+    
     /* hash and salt password, assumes salt is in database. */
     protected function hashAndSaltPword($pword, $email) {
         $salt = $this->dbmsC->select("people", "email, salt", "WHERE email='".$email."'");

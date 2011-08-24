@@ -60,7 +60,7 @@ class userUI {
              "<p><label>Login/email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
              "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"login\"></label></p>".PHP_EOL.
-             "<p><input type=\"submit\" value=\"login\"></p>".PHP_EOL.
+             "<p><input class=\"button\" type=\"submit\" value=\"login\"></p>".PHP_EOL.
              "</form>".PHP_EOL;
         }
     }
@@ -74,7 +74,7 @@ class userUI {
     public function logoutForm() {
         if(($this->user->checkCookie())) {
             echo "<form action=\"".webTools::currentURL()."\" method=\"post\">".PHP_EOL.
-                 "<label><input type=\"submit\" name=\"CMD\" value=\"logout\"></label>".PHP_EOL.   
+                 "<label><input class=\"button\" type=\"submit\" name=\"CMD\" value=\"logout\"></label>".PHP_EOL.   
                  "</form>".PHP_EOL;
         }
     }
@@ -98,7 +98,7 @@ class userUI {
              "<p><label>Surname: <input type=\"text\" name=\"lname\"></label></p>".PHP_EOL.
              "<p><label>Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"register\"></label></p>".PHP_EOL.
-             "<p><input type=\"submit\" value=\"Register\"></p>".PHP_EOL.
+             "<p><input class=\"button\" type=\"submit\" value=\"Register\"></p>".PHP_EOL.
              "</form>".PHP_EOL;
     }
     
@@ -143,6 +143,8 @@ class userUI {
                 return "<p>".$ret."</p>";
             }
         }
+        //reload page after updating details
+        header("Location: ".webTools::currentURL());
     }
     public function updateCredentialsForm() {
         if(($this->user->checkCookie())) {
@@ -154,12 +156,39 @@ class userUI {
               "<p><label>New Email: <input type=\"text\" name=\"newemail\"></label></p>".PHP_EOL.
               "<p><label>New password: <input type=\"text\" name=\"newpass\"></label></p>".PHP_EOL.
               "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateCredentials\"></label></p>".PHP_EOL.
-              "<p><label><input type=\"submit\" value=\"update\"</label></p>".PHP_EOL.         
+              "<p><label><input class=\"button\" type=\"submit\" value=\"update\"</label></p>".PHP_EOL.         
               "</form>".PHP_EOL;
         }
     }
+    
+    private function updateProfile() {
+        ;
+    }
+    public function updateProfileForm(){
+        $email = $this->user->checkCookie();
+        if(!($email)) return false; //stop if not logged in
+        
+        $details = $this->user->getProfile($email);
+        // profile fields: "firstname,lastname,email,email2,peopleStatement,url,image,image_caption,region,gallery_image,people_status"
+        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+             "<h2>Profile Details </h2>".PHP_EOL.
+             "<p><label>Firstname: <input type=\"text\" size=\"32\" name=\"firstname\" value=\"".$details['firstname']."\"></label></p>".PHP_EOL.
+             "<p><label>Surname: <input type=\"text\" size=\"32\" name=\"lastname\" value=\"".$details['lastname']."\"></label></p>".PHP_EOL.
+             "<p><label>Email: <input type=\"text\" size=\"32\" disabled=\"true\" readonly=\"readonly\" name=\"email\" value=\"".$details['email']."\"></label></p>".PHP_EOL.
+             "<p><label>Alternative email: <input type=\"text\" size=\"42\" name=\"email2\" value=\"".$details['email2']."\"> </label></p>".PHP_EOL.
+             "<p><label>Webpage: <input type=\"text\" name=\"url\" size=\"64\" value=\"".$details['url']."\"</label></p>".PHP_EOL.
+             "<p><label>Image: <input type=\"file\" name=\"image\">".PHP_EOL.
+                 "<br><img src=\"data:image/gif;base64,".base64_decode($details['image'])."\" alt=\"\"></label></p>".PHP_EOL.
+             "<p><label>Image caption: <input type=\"text\" name=\"image_caption\" size=\"64\" value=\"".$details['image_caption']."\"></label></p>".PHP_EOL.
+             "<p><label>region:</label></p>".PHP_EOL.
+             "<p><label></label></p>".PHP_EOL.
+             "<p><label></label></p>".PHP_EOL.
+             "<p><label>Statement: <br> <textarea>".$details['peopleStatement']."</textarea></label></p>".PHP_EOL.
+             "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateProfile\"></label></p>".PHP_EOL.
+             "<p><label><input class=\"button\" type=\"submit\" value=\"update\"></label></p>".PHP_EOL.
+             "</form>";
+    }
 }
-
 /* START 
 /* enforce posting method */
 
