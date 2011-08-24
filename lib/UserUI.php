@@ -17,7 +17,7 @@ class userUI {
     
     public function __construct() {
         $this->user = new user();
-        webTools::phpErrorsOn();
+        //webTools::phpErrorsOn();
     }
     
     public function checkCookie() {
@@ -160,7 +160,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     webTools::cleanArray($_POST);
     $ui = new userUI;
     $ui->postHandle();
-    //$ui->checkCookie();
 }
 //
 /*END*/
