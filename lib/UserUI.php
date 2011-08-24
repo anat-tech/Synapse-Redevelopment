@@ -17,7 +17,7 @@ class userUI {
     
     public function __construct() {
         $this->user = new user();
-        //webTools::phpErrorsOn();
+        webTools::phpErrorsOn();
     }
     
     public function checkCookie() {
@@ -128,14 +128,21 @@ class userUI {
                     $this->register();
                     break;
                 }
+                case "updateCredentials" : {
+                    $this->updateCredentials();
+                    break;
+                }
             }
         }
     }
     private function updateCredentials() {
         //check user is logged in
-        if($this->checkCookie())
-            if($this->user->authenticate($_POST['email'], $_POST['pass'])) //check authentication again
-                $this->user->updateCredentials($oldpass, $passwd, $email, $newemail); //update
+        if($this->user->checkCookie() != false) {
+            if($this->user->authenticate($_POST['email'], $_POST['pass'])) {//check authentication again 
+                $ret = $this->user->updateCredentials($_POST['pass'], $_POST['newpass'], $_POST['email'], $_POST['newemail']); //update
+                return "<p>".$ret."</p>";
+            }
+        }
     }
     public function updateCredentialsForm() {
         if(($this->user->checkCookie())) {

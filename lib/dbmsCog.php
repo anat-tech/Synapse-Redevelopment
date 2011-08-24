@@ -168,7 +168,7 @@ class dbmsCog
         if( isset($table) && isset($colum)  && isset($value)  && isset($condition))
         {
             //$query = "UPDATE ".$table." SET ".$colums."=".$value." ".$condition;
-            $query = ("UPDATE ".$table." SET ".$colum."=\"".$value."\" ".$condition);
+            $query = ("UPDATE ".$table." SET ".$colum."='".$value."' ".$condition);
             $outcome = $this->query($query);
             /* on success */
             if($outcome == 1)  return 200;       
@@ -180,7 +180,7 @@ class dbmsCog
         else return 406; //Not Acceptable
     }
     
-    /* multiple colum update*/
+    /* multiple colum up*/
     function updateCols($table,$arry,$condition) {
         if((is_array($arry))  && (isset($condition)) && (isset($table))) {
             $query = "UPDATE ".$table." SET ";

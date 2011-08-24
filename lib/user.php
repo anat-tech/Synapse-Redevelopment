@@ -36,7 +36,6 @@ class user
        $this->dbmsC->insert("people", $profile );
         
             /*send email*/
-            //mail($email, "Welcome to Synapse", "username: ".$email.PHP_EOL."password: ".$pass);
             /*debugging show pass */
         echo "</h4>".$pass."<h4>";
         
@@ -123,16 +122,19 @@ class user
     /* function for updating both password and username/email */
     function updateCredentials($oldpass, $passwd, $email, $newemail){
         if ($this->authenticate($email, $oldpass) == 200) {
+            $out;
             /* updates password if there is a new one */
             if(!(empty($passwd))) {
                 $this->updatePassword ($passwd, $email);
-                return $passwd;
+                $out .= "\nPassword updated to ".$passwd;
             }
             /* update email if there is a new one */
             if(!(empty($newemail))) {
-                $this->dbmsC->update("people", "email", $newemail, "WHERE email=".$email);
+                //before updating check email
+                $this->dbmsC->update("people", "email", $newemail, "WHERE email='".$email."'");
+                $out .= "\nEmail updated to ".$email;
             }
-            return "nothing changed";
+            return $out;
         }
         else {
             return 401; //unauthorised
@@ -149,7 +151,7 @@ class user
         /* hash pass */
         $passwd = $this->hashAndSaltPword($passwd, $email);
         /* update password stored in database*/
-        $result = $this->dbmsC->update("people", "passwd", $passwd, "WHERE email=".$email);
+        $result = $this->dbmsC->update("people", "passwd", $passwd, "WHERE email='".$email."'");
         return $result;
         }
     }
