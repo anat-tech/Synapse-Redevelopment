@@ -53,8 +53,9 @@ class user
         $cookietime = $cookie['cookietime'];
         
         /* delete cookie data if cookie has timed out */
-        if($cookietime + $this->cookietimeout > time()){
+        if(($cookietime < time()) && ($cookietime != 0)){
             $this->removeCookie($email);
+            return false;
         }
         
         //checks if cookie has been set, if not, create cookie!
@@ -68,7 +69,7 @@ class user
             ///store cookie data in database for verfication later.
             //change these to be one query for optimisation
             if( setcookie($this->cookiename, $saltedcookie, time()+$this->cookietimeout, "/", $_SERVER['SERVER_NAME'])) {
-                $this->dbmsC->updateCols("people", array("cookietime" => time(), "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "where email='".$email."'");
+                $this->dbmsC->updateCols("people", array("cookietime" => time() + $this->cookietimeout, "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "where email='".$email."'");
             }
             return 200;
         }
@@ -86,8 +87,7 @@ class user
             $check = $this->dbmsC->select("people", "cookiehash,cookiesalt,cookietime,email", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
             if(($check == 404) || ($check == 406)) return false;
             //if cookie exists time check
-            //if the stored time out is less than 
-            if($check['cookietime'] + $this->cookietimeout > time() ) {
+            if($check['cookietime'] < time() ) {
                 return false;
             }
             //if cookie exists, sanity check.
@@ -105,7 +105,7 @@ class user
         /* this still doesn't delete the cookie from the browser */
         $_COOKIE['synapse-valve'] = "";
         setcookie("synapse-valve", "", time() - 60000);
-        $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
+        $this->dbmsC->updateCols("people", array("cookiehash" => "nudda", "cookietime" => 0), "where email='".$email."'");
     }
     
     /* Basic people listing */

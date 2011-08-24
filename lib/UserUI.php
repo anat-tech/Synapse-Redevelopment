@@ -17,7 +17,7 @@ class userUI {
     
     public function __construct() {
         $this->user = new user();
-        webTools::phpErrorsOn();
+        //webTools::phpErrorsOn();
     }
     
     public function checkCookie() {
@@ -140,7 +140,7 @@ class userUI {
         if($this->user->checkCookie() != false) {
             if($this->user->authenticate($_POST['email'], $_POST['pass'])) {//check authentication again 
                 $ret = $this->user->updateCredentials($_POST['pass'], $_POST['newpass'], $_POST['email'], $_POST['newemail']); //update
-                return "<p>".$ret."</p>";
+                echo "<p>".$ret."</p>";
             }
         }
         //reload page after updating details
