@@ -9,7 +9,11 @@
     <?php webTools::phpErrorsOn(); ?>    
     <?php $ui->loginForm(); ?>
     <?php UserUI::registerForm(); ?>
-    <?php webtools::printCookies(); ?>
+    <?php //webtools::printCookies(); ?>
+    <form>
+        <label>You are logged in as: <?php $ui->checkCookie() ?></label>
+        <label><input type="submit" value="Home"></label>
+    </form>
 </body>
 </html>
 
