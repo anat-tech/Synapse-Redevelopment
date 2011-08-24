@@ -98,8 +98,9 @@ class user
     }
     
     function removeCookie($email) {
-        setcookie("synapse-valve", "", time() - 60000);
+        /* this still doesn't delete the cookie from the browser */
         $_COOKIE['synapse-valve'] = "";
+        setcookie("synapse-valve", "", time() - 60000);
         $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
     }
     
