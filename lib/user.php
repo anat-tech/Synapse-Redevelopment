@@ -54,7 +54,7 @@ class user
         $cookietime = $cookie['cookietime'];
         
         /* delete cookie data if cookie has timed out */
-        if(time() - $cookietime < $this->cookietimeout){
+        if($cookietime + $this->cookietimeout > time()){
             $this->removeCookie($email);
         }
         
@@ -84,8 +84,13 @@ class user
     //this should occur everytime a sensitive page is loaded, thus it should be made very effecient
     function checkCookie() {
         if(isset($_COOKIE[$this->cookiename])) { //if a cookie is set
-            $check = $this->dbmsC->select("people", "cookiehash,cookiesalt,email", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
+            $check = $this->dbmsC->select("people", "cookiehash,cookiesalt,cookietime,email", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
             if(($check == 404) || ($check == 406)) return false;
+            //if cookie exists time check
+            //if the stored time out is less than 
+            if($check['cookietime'] + $this->cookietimeout > time() ) {
+                return false;
+            }
             //if cookie exists, sanity check.
             $check = mysql_fetch_assoc($check);
             $cookiesalt = $check['cookiesalt'];
@@ -121,11 +126,13 @@ class user
             /* updates password if there is a new one */
             if(!(empty($passwd))) {
                 $this->updatePassword ($passwd, $email);
+                return $passwd;
             }
             /* update email if there is a new one */
             if(!(empty($newemail))) {
                 $this->dbmsC->update("people", "email", $newemail, "WHERE email=".$email);
             }
+            return "nothing changed";
         }
         else {
             return 401; //unauthorised
