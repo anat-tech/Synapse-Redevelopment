@@ -22,12 +22,14 @@ class user
         if($this->dbmsC->recordExists("people", "email", $email)) {
             return 409; //conflict - record exists
         }
+        
         if(!(isset($pass))) {
             /* generate password */
             $pass = $this->generatePassword(8);
         }
-            /*generate salt */
-            $salt = $this->generatePassword(rand(6,254));   
+        
+       /*generate salt */
+       $salt = $this->generatePassword(rand(30,254));   
             
        $profile = array("firstname"=> $fname, "lastname"=>$lname, "email"=>$email, "salt"=>$salt, "passwd"=>sha1($salt.$pass));
        /*insert data*/
@@ -44,24 +46,26 @@ class user
     function adjustCookie($email, $pass, $ip) {
         /* authenticate again, just incase */
         if(!($this->authenticate($email, $pass))) return false;
-        //gets the current cookie
-        $check = $this->dbmsC->select("people", "cookiehash", "where email='".$email."'");
-        $check = mysql_fetch_assoc($check);
-        $check = $check['cookiehash'];
         
-        //gets the cookie stored time
+        //gets the current cookie
+        $cookie = $this->dbmsC->select("people", "cookiehash,cookietime,cookiesalt", "where email='".$email."'");
+        $cookie = mysql_fetch_assoc($cookie);
+        $cookiehash = $cookie['cookiehash'];
+        $cookietime = $cookie['cookietime'];
+        
+        /*/gets the cookie stored time
         $scktime = $this->dbmsC->select("people", "cookietime", "where email='".$email."'");
         $scktime = mysql_fetch_assoc($scktime);
-        $scktime = $scktime['cookietime'];
+        $scktime = $scktime['cookietime'];*/
         
         /* delete cookie data if cookie has timed out */
-        if(time() - $scktime < $this->cookietimeout){
-            $this->dbmsC->update("people", "cookiehash", NULL, "where email='".$email."'");
+        if(time() - $cookietime < $this->cookietimeout){
+            $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
         }
         
         //checks if cookie has been set, if not, create cookie!
-        if($check == "nudda") {
-            /* create random data for the cookie */
+        if($cookiehash == "nudda") {
+            //generate a new salt for each cookie.
             $cookiesalt = $this->generatePassword(rand(8,12));
             
             //generate salted cookie data; note the lack of sensitive information used.
@@ -70,9 +74,10 @@ class user
             ///store cookie data in database for verfication later.
             //change these to be one query for optimisation
             if( setcookie($this->cookiename, $saltedcookie, time()+$this->cookietimeout, "/", $_SERVER['SERVER_NAME'])) {
-            $this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
+            /*$this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
             $this->dbmsC->update("people", "cookiesalt", $cookiesalt, "where email='".$email."'");
-            $this->dbmsC->update("people", "cookietime", time(), "where email='".$email."'"); 
+            $this->dbmsC->update("people", "cookietime", time(), "where email='".$email."'"); */
+                $this->dbmsC->updateCols("people", array("cookietime" => time(), "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "where email='".$email."'");
             }
             return 200;
         }
