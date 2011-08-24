@@ -53,11 +53,6 @@ class user
         $cookiehash = $cookie['cookiehash'];
         $cookietime = $cookie['cookietime'];
         
-        /*/gets the cookie stored time
-        $scktime = $this->dbmsC->select("people", "cookietime", "where email='".$email."'");
-        $scktime = mysql_fetch_assoc($scktime);
-        $scktime = $scktime['cookietime'];*/
-        
         /* delete cookie data if cookie has timed out */
         if(time() - $cookietime < $this->cookietimeout){
             $this->dbmsC->update("people", "cookiehash", "nudda", "where email='".$email."'");
@@ -74,9 +69,6 @@ class user
             ///store cookie data in database for verfication later.
             //change these to be one query for optimisation
             if( setcookie($this->cookiename, $saltedcookie, time()+$this->cookietimeout, "/", $_SERVER['SERVER_NAME'])) {
-            /*$this->dbmsC->update("people", "cookiehash", $saltedcookie, "where email='".$email."'");
-            $this->dbmsC->update("people", "cookiesalt", $cookiesalt, "where email='".$email."'");
-            $this->dbmsC->update("people", "cookietime", time(), "where email='".$email."'"); */
                 $this->dbmsC->updateCols("people", array("cookietime" => time(), "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "where email='".$email."'");
             }
             return 200;
@@ -92,12 +84,15 @@ class user
     //this should occur everytime a sensitive page is loaded, thus it should be made very effecient
     function checkCookie() {
         if(isset($_COOKIE[$this->cookiename])) { //if a cookie is set
-            $check = $this->dbmsC->select("people", "cookiehash,cookiesalt", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
+            $check = $this->dbmsC->select("people", "cookiehash,cookiesalt,email", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
             if(($check == 404) || ($check == 406)) return false;
             //if cookie exists, sanity check.
-            $cookiesalt = mysql_fetch_assoc($check);
-            $cookiesalt = $cookiesalt['cookiesalt'];
-            return (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]);
+            $check = mysql_fetch_assoc($check);
+            $cookiesalt = $check['cookiesalt'];
+            if (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]) {
+                return $check['email'];
+            }
+            else return false;
         }
         return false;
     }
@@ -186,7 +181,7 @@ class user
         if($salt) {
            $salt;
             $salt = $salt['salt'];
-            $pword = sha1($salt.$pword);
+            $pword = sha1($salt.$pword);      
         }
         return $pword;
     }
