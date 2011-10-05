@@ -72,6 +72,7 @@ class dbmsCog
             /* no errors */
             else
             {
+                //print_r($result);
                 $this->rowCount = (mysql_num_rows($result));
                 return $result;
             }
@@ -146,11 +147,15 @@ class dbmsCog
             $query = "SELECT ".$colums." FROM ".$table;
             /* checks if conditions are set and appends them if so */
             if(isset($conditions)) $query .= " ".$conditions;
-            
+            $query .= ";";
             /* run query*/ 
             $outcome = $this->query($query);
-            if($this->rowCount > 0) {
-                return $outcome;
+            //print_r(mysql_fetch_assoc($outcome));
+            if ($this->rowCount == 1) {
+                return mysql_fetch_assoc($outcome);
+            }
+            else if($this->rowCount > 0) {
+                return ($outcome);
             }
             else {
                 return 404;

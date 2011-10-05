@@ -33,24 +33,39 @@ form, input {
 }
 
 input{border:2px #CCCCCC groove;}
+input:focus{
+    border:2px #ff9900 solid ;
+    box-shadow:0 0 0.25em #ff9900;
+}
 
 .button {
-    color:#333333;
-    background-color:#DDDDDD;
     border:none;
     border-radius:0.25em;
     padding-left: 0.5em; padding-right:0.5em;
     padding-top:0.25em;padding-bottom:0.25em;
     margin:0.5em;
     text-shadow:rgba(0,0,0,0.25) 0px -1px 2px ;
-    
+}
+input.button {
+  color:#333333;
+  background-color:#DDDDDD;
   /* Safari 5.1, Chrome 10+ */
   background: -webkit-linear-gradient(top, #ffffff, #CCCCCC);
   /* Firefox 3.6+ */
   background: -moz-linear-gradient(top, #ffffff, #CCCCCC);
-  /* IE 10 */
-  background: -ms-linear-gradient(top, #ffffff, #CCCCCC);
   /* Opera 11.10+ */
   background: -o-linear-gradient(top, #ffffff, #CCCCCC);
     
+}
+
+input.button:hover, input.button:focus {
+    border:none;
+    color:#ddd;
+  background-color:#333;
+  /* Safari 5.1, Chrome 10+ */
+  background: -webkit-linear-gradient(top, #999, #666);
+  /* Firefox 3.6+ */
+  background: -moz-linear-gradient(top, #999, #666);
+  /* Opera 11.10+ */
+  background: -o-linear-gradient(top, #999, #666);
 }

@@ -48,7 +48,7 @@ class user
         
         //gets the current cookie
         $cookie = $this->dbmsC->select("people", "cookiehash,cookietime,cookiesalt", "where email='".$email."'");
-        $cookie = mysql_fetch_assoc($cookie);
+        //$cookie = mysql_fetch_assoc($cookie);
         $cookiehash = $cookie['cookiehash'];
         $cookietime = $cookie['cookietime'];
         
@@ -85,13 +85,14 @@ class user
     function checkCookie() {
         if(isset($_COOKIE[$this->cookiename])) { //if a cookie is set
             $check = $this->dbmsC->select("people", "cookiehash,cookiesalt,cookietime,email", "where cookiehash='".$_COOKIE[$this->cookiename]."'");
-            if(($check == 404) || ($check == 406)) return false;
+     
+            if(($check == 404) || ($check == 406) || (!($check))) return false;
             //if cookie exists time check
-            if($check['cookietime'] < time() ) {
+            if($check['cookietime'] < time()) {
+                echo "time fail ".$check['cookietime'];
                 return false;
             }
             //if cookie exists, sanity check.
-            $check = mysql_fetch_assoc($check);
             $cookiesalt = $check['cookiesalt'];
             if (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]) {
                 return $check['email'];
@@ -192,7 +193,7 @@ class user
     //gets the full profile via email
     function getProfile($email) {
         $out = $this->dbmsC->select("people", "firstname,lastname,email,email2,peopleStatement,url,image,image_caption,region,gallery_image,people_status", "where email='".$email."'");
-        $out = mysql_fetch_assoc($out);
+        //$out = mysql_fetch_assoc($out);
         return $out;
     }
     
@@ -200,7 +201,7 @@ class user
     protected function hashAndSaltPword($pword, $email) {
         $salt = $this->dbmsC->select("people", "email, salt", "WHERE email='".$email."'");
         
-        $salt = mysql_fetch_assoc($salt);
+        //$salt = mysql_fetch_assoc($salt);
         if($salt) {
            $salt;
             $salt = $salt['salt'];
@@ -215,7 +216,7 @@ class user
         $passwd_in = $this->hashAndSaltPword($passwd_in, $email);
         /* grabs stored password*/
         $passwd = $this->dbmsC->select("people", "email,passwd", "where email='".$email."'");
-        $passwd = mysql_fetch_assoc($passwd);
+        //$passwd = mysql_fetch_assoc($passwd);
         $passwd = $passwd['passwd'];
         
         /* compares */

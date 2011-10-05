@@ -34,7 +34,6 @@ class userUI {
         if($res != 200) echo "<p>".$res."</p>";
         else header("Location: ".webTools::currentURL());
     }
-    
 
     private function login() {
         if(($_POST['email']) && ($_POST['pass'])) {
@@ -132,6 +131,10 @@ class userUI {
                     $this->updateCredentials();
                     break;
                 }
+                case "updateProfile" : {
+                    $this->updateProfile();
+                    break;
+                }
             }
         }
     }
@@ -150,19 +153,26 @@ class userUI {
         if(($this->user->checkCookie())) {
         echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
               "<h2>Update Credentials</h2>".PHP_EOL.
-              "<p><label>Current Email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
-              "<p><label>Current Password: <input type=\"text\" name=\"pass\"></label></p>".PHP_EOL.
-              "<p><label>* leave new fields blank to not change.</label></p>".PHP_EOL.
+              "<p><label>* Current Email: <input type=\"text\" name=\"email\"></label></p>".PHP_EOL.
+              "<p><label>* Current Password: <input type=\"password\" name=\"pass\"></label></p>".PHP_EOL.
+              "<p><label>* fields required.</label></p>".PHP_EOL.
+              "<p><label><b>leave new fields blank to not change.</b></label></p>".PHP_EOL.
               "<p><label>New Email: <input type=\"text\" name=\"newemail\"></label></p>".PHP_EOL.
-              "<p><label>New password: <input type=\"text\" name=\"newpass\"></label></p>".PHP_EOL.
-              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateCredentials\"></label></p>".PHP_EOL.
-              "<p><label><input class=\"button\" type=\"submit\" value=\"update\"</label></p>".PHP_EOL.         
+              "<p><label>New password: <input type=\"text\" name=\"newpass\"> :: WARNING Input is visible</label></p>".PHP_EOL.
+              "<p><label><input type=\"hidden\" name=\"CMD\" value=\"updateCredentials\"></label></p>".PHP_EOL.              
+              "<p><label><input class=\"button\" type=\"submit\" value=\"update\"></label></p>".PHP_EOL.         
               "</form>".PHP_EOL;
         }
     }
     
     private function updateProfile() {
-        ;
+        $updateArray = array();
+        foreach($_POST as $key => $value) {
+            if(($key != 'email') || ($key != 'pass')) {
+                $updateArry[$key] = $value;
+            }
+        }
+        print_r($updateArray);
     }
     public function updateProfileForm(){
         $email = $this->user->checkCookie();
@@ -174,11 +184,10 @@ class userUI {
              "<h2>Profile Details </h2>".PHP_EOL.
              "<p><label>Firstname: <input type=\"text\" size=\"32\" name=\"firstname\" value=\"".$details['firstname']."\"></label></p>".PHP_EOL.
              "<p><label>Surname: <input type=\"text\" size=\"32\" name=\"lastname\" value=\"".$details['lastname']."\"></label></p>".PHP_EOL.
-             "<p><label>Email: <input type=\"text\" size=\"32\" disabled=\"true\" readonly=\"readonly\" name=\"email\" value=\"".$details['email']."\"></label></p>".PHP_EOL.
              "<p><label>Alternative email: <input type=\"text\" size=\"42\" name=\"email2\" value=\"".$details['email2']."\"> </label></p>".PHP_EOL.
              "<p><label>Webpage: <input type=\"text\" name=\"url\" size=\"64\" value=\"".$details['url']."\"</label></p>".PHP_EOL.
              "<p><label>Image: <input type=\"file\" name=\"image\">".PHP_EOL.
-                 "<br><img src=\"data:image/gif;base64,".base64_decode($details['image'])."\" alt=\"\"></label></p>".PHP_EOL.
+             "<br><img src=\"data:image/gif;base64,".base64_decode($details['image'])."\" alt=\"\"></label></p>".PHP_EOL.
              "<p><label>Image caption: <input type=\"text\" name=\"image_caption\" size=\"64\" value=\"".$details['image_caption']."\"></label></p>".PHP_EOL.
              "<p><label>region:</label></p>".PHP_EOL.
              "<p><label></label></p>".PHP_EOL.

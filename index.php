@@ -8,7 +8,7 @@
     <?php include 'lib/UserUI.php'; include 'lib/webTools.php'; $ui = new UserUI; ?>   
     <?php $ui->loginForm(); ?>
     <?php $ui->logoutForm(); ?>
-    <?php $ui->updateCredentialsForm(); ?>
+    <!--?php $ui->updateCredentialsForm(); ?-->
     <?php $ui->registerForm(); ?>
     <?php $ui->updateProfileForm(); ?>
     <form>
