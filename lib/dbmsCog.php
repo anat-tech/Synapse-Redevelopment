@@ -177,7 +177,7 @@ class dbmsCog
         if((is_array($arry))  && (isset($condition)) && (isset($table))) {
             $query = "UPDATE ".$table." SET ";
             foreach($arry as $colum => $value) {
-                $query .= $colum."=\"".$value."\",";
+                $query .= $colum."='".$value."', ";
             }
             $query = substr($query, 0, -1); //trim off the last commar
             $query.= " ".$condition;

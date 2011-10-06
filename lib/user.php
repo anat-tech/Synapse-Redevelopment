@@ -164,7 +164,6 @@ class user
         
         /* check user exists*/
         if(!($this->dbmsC->recordExists("people", "email", $email))) return false;
-        print_r($in);
         $result = $this->dbmsC->updateCols("people", $in, "email='".$email."'");
         return $result;
     }
