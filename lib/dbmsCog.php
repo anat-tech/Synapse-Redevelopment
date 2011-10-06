@@ -6,7 +6,6 @@
   * @version 1.0.1
   * 
 **/
-
 class dbmsCog
 {
     /* header declarations */
@@ -51,7 +50,6 @@ class dbmsCog
            return mysql_close($this->link);
     }
     
-    
     /* function for executing queries on the dbms */
     private function query($query)
     {
@@ -60,7 +58,6 @@ class dbmsCog
         {       
             /* sanitize query */
             $query = stripslashes(mysql_real_escape_string($query, $this->link));
-            
             /* run query*/
             $result = mysql_query($query, $this->link);
             /* 400 Bad Request (probably wrong syntax) */
@@ -99,16 +96,9 @@ class dbmsCog
         }
     }
     
-    /* getter method for sqlError */
-    function getError()
-    {
-        return $this->sqlErr;
-    }
-    
-    function getRowCount()
-    {
-        return $this->rowCount;
-    }
+    /* getter method for sqlError & rowcount */
+    function getError() { return $this->sqlErr; }
+    function getRowCount() { return $this->rowCount; }
     
     /* for inserting a row */
     function insert($table, $insert)
@@ -118,8 +108,7 @@ class dbmsCog
         {
             /* put incomming variables into insertion query */
             $values = (implode('\',\'',array_values($insert)));
-            $keys = array_keys($insert);
-        
+            $keys = array_keys($insert);      
             /* run query */
             $outcome = $this->query('INSERT INTO `'.$table.'` (`'.implode('`,`', $keys).'`) VALUES (\''.$values.'\')');
             /* on success */
@@ -132,8 +121,7 @@ class dbmsCog
     
     function recordExists($table, $colum, $value) {
         $result = $this->query("SELECT * FROM ".$table." WHERE ".$colum."='".$value."'");
-        $rows = mysql_num_rows($result);
-        
+        $rows = mysql_num_rows($result);        
         if($rows) return true ;
         else return false;
     }
@@ -172,7 +160,6 @@ class dbmsCog
         /* require these parameters*/
         if( isset($table) && isset($colum)  && isset($value)  && isset($condition))
         {
-            //$query = "UPDATE ".$table." SET ".$colums."=".$value." ".$condition;
             $query = ("UPDATE ".$table." SET ".$colum."='".$value."' ".$condition);
             $outcome = $this->query($query);
             /* on success */
