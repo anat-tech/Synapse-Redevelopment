@@ -34,6 +34,12 @@ class userUI {
         if($res != 200) echo "<p>".$res."</p>";
         else header("Location: ".webTools::currentURL());
     }
+    
+    public function feedback($feedback) {
+            echo "<div id=\"feedback\">".PHP_EOL."
+            <p>".$feedback."</p>".PHP_EOL."
+            </div>";
+    }
 
     private function login() {
         if(($_POST['email']) && ($_POST['pass'])) {
@@ -44,11 +50,11 @@ class userUI {
                 //echo "Success";
             }
             else {
-                echo "<p>Authentication failed</p>";
+                $this->feedback("Authentication failed");
             }
         }
         else {
-            echo "<p>Login Error :: email or password missing.</p>";
+            echo $this->feedback("Login Error :: email or password missing.");
         }
     }
     /*outputs a login form on request */
@@ -81,11 +87,11 @@ class userUI {
     private function register() {
         if((isset($_POST['email'])) && (isset($_POST['fname'])) && (isset($_POST['lname']))) {
             if ($this->user->register($_POST['fname'], $_POST['lname'], $_POST['email'], $_POST['pass']) == 409) {
-                echo "<p>Error: email already registered.</p>";
+                $this->feedback("Error: email already registered.");
             }
         }
         else {
-            echo "<p>Unable to register, email, first name and last name required!</p>";
+            $this->feedback("Unable to register, email, first name and last name required!");
         }
     }
     public function registerForm() {
@@ -143,7 +149,7 @@ class userUI {
         if($this->user->checkCookie() != false) {
             if($this->user->authenticate($_POST['email'], $_POST['pass'])) {//check authentication again 
                 $ret = $this->user->updateCredentials($_POST['pass'], $_POST['newpass'], $_POST['email'], $_POST['newemail']); //update
-                echo "<p>".$ret."</p>";
+                $this->feedback($ret);
             }
         }
         //reload page after updating details
@@ -166,6 +172,7 @@ class userUI {
     }
     
     private function updateProfile() {
+        //filter values
         foreach($_POST as $key => $value) {
             $key = trim($key);
             //inaccessible fields
@@ -178,11 +185,13 @@ class userUI {
                 return false;
             }
         }
+        
+        //check cookies
         $email = $this->user->checkCookie();
         if($email)
             $out = ($this->user->updateProfile($GLOBALS['updateArry'], $email));
-            if($out == 200) echo "<p>update successful!</p>";
-            else echo $out;
+            if($out == 200) $this->feedback("update successful!");
+            else $this->feedback($out);
     }
     public function updateProfileForm(){
         $email = $this->user->checkCookie();
