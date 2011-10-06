@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <?php include 'lib/UserUI.php'; include 'lib/webTools.php'; $ui = new UserUI; ?>   
+    <?php $auth = false; include 'lib/UserUI.php'; include 'lib/webTools.php'; $ui = new UserUI; ?>  
     <?php $ui->loginForm(); ?>
     <?php $ui->logoutForm(); ?>
     <!--?php $ui->updateCredentialsForm(); ?-->

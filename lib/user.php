@@ -95,6 +95,7 @@ class user
             //if cookie exists, sanity check.
             $cookiesalt = $check['cookiesalt'];
             if (sha1($cookiesalt.$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']) == $_COOKIE[$this->cookiename]) {
+                $this->auth = $check['email'];
                 return $check['email'];
             }
             else return false;
@@ -156,7 +157,17 @@ class user
         return $result;
         }
     }
- 
+    public function updateProfile($in, $email) {
+        unset($in['CMD']); //clear off the excess;
+        /* ensure an array is being passed and email has been set*/
+        if(!(is_array($in)) || !($email)) return false;
+        
+        /* check user exists*/
+        if(!($this->dbmsC->recordExists("people", "email", $email))) return false;
+        print_r($in);
+        $result = $this->dbmsC->updateCols("people", $in, "email='".$email."'");
+        return $result;
+    }
     /* function for dealing with lost passwords */   
     function resetPassword($email) {
         /* generate password and update user*/

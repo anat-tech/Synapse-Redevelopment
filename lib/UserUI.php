@@ -20,7 +20,7 @@ class userUI {
         //webTools::phpErrorsOn();
     }
     
-    public function checkCookie() {
+    public function checkCookie() {        
         $user = $this->user->checkCookie();
         if($user) {
             echo $user;
@@ -166,13 +166,23 @@ class userUI {
     }
     
     private function updateProfile() {
-        $updateArray = array();
         foreach($_POST as $key => $value) {
-            if(($key != 'email') || ($key != 'pass')) {
-                $updateArry[$key] = $value;
+            $key = trim($key);
+            //inaccessible fields
+            if(($key != 'email') || ($key != "salt" ) || ($key != 'passwd') || (substr($key,0,5) != 'cookie')) {
+                $GLOBALS['updateArry'][$key] = $value;
+            }
+            else {
+                //return false;
+                echo "fail";
+                return false;
             }
         }
-        print_r($updateArray);
+        $email = $this->user->checkCookie();
+        if($email)
+            $out = ($this->user->updateProfile($GLOBALS['updateArry'], $email));
+            if($out == 200) echo "<p>update successful!</p>";
+            else echo $out;
     }
     public function updateProfileForm(){
         $email = $this->user->checkCookie();
