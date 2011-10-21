@@ -162,6 +162,19 @@ class user
         /* ensure an array is being passed and email has been set*/
         if(!(is_array($in)) || !($email)) return false;
         
+        /*if image handle image */
+        if($_FILES['image']) {
+            //check it is a image
+            if (substr($_FILES['image']['type'], 0,5) == "image") {
+                //set the type variale
+                $in['image_type'] = $_FILES['image']['type'];
+                
+                //read in the image
+                $fp = fopen($_FILES['image']['tmp_name'], 'r');
+                    $in['image'] = fread($fp, $_FILES['image']['size']);
+                fclose($fp);
+            }
+        }
         /* check user exists*/
         if(!($this->dbmsC->recordExists("people", "email", $email))) return false;
         $result = $this->dbmsC->updateCols("people", $in, "email='".$email."'");

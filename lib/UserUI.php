@@ -199,14 +199,14 @@ class userUI {
         
         $details = $this->user->getProfile($email);
         // profile fields: "firstname,lastname,email,email2,peopleStatement,url,image,image_caption,region,gallery_image,people_status"
-        echo "<form action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
+        echo "<form enctype=\"multipart/form-data\" action=\"".webtools::currentURL()."\" method=\"post\">".PHP_EOL.
              "<h2>Profile Details </h2>".PHP_EOL.
              "<p><label>Firstname: <input type=\"text\" size=\"32\" name=\"firstname\" value=\"".$details['firstname']."\"></label></p>".PHP_EOL.
              "<p><label>Surname: <input type=\"text\" size=\"32\" name=\"lastname\" value=\"".$details['lastname']."\"></label></p>".PHP_EOL.
              "<p><label>Alternative email: <input type=\"text\" size=\"42\" name=\"email2\" value=\"".$details['email2']."\"> </label></p>".PHP_EOL.
              "<p><label>Webpage: <input type=\"text\" name=\"url\" size=\"64\" value=\"".$details['url']."\"</label></p>".PHP_EOL.
              "<p><label>Image: <input type=\"file\" name=\"image\">".PHP_EOL.
-             "<br><img src=\"data:image/gif;base64,".base64_decode($details['image'])."\" alt=\"\"></label></p>".PHP_EOL.
+             //"<br><img src=\"data:image/gif;base64,".base64_decode($details['image'])."\" alt=\"\"></label></p>".PHP_EOL.
              "<p><label>Image caption: <input type=\"text\" name=\"image_caption\" size=\"64\" value=\"".$details['image_caption']."\"></label></p>".PHP_EOL.
              "<p><label>region:</label></p>".PHP_EOL.
              "<p><label></label></p>".PHP_EOL.
