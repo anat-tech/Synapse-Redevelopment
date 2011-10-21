@@ -53,6 +53,7 @@ class dbmsCog
     /* function for executing queries on the dbms */
     private function query($query)
     {
+        $query .= ";";
         /* make connection */
         if($this->connect())
         {       
@@ -185,6 +186,16 @@ class dbmsCog
             if ($outcome == 1) return 200;
             else return $outcome;
         }
+    }
+    /* for updating/inserting a specific file*/
+    function updateFile ($table, $col, $data, $condition) {
+        if(isset($table) && isset($col) && isset($data)) {
+            echo "d1";
+            $outcome = $this->query("UPDATE ".$table." SET ".$col."='".mysql_real_escape_string($data)."' ".$condition);
+            if($outcome == 1) return 200;
+                else return $outcome;
+        }
+        else return 406; //Not Acceptable
     }
 }
 ?>

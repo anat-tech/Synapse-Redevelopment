@@ -167,17 +167,17 @@ class user
             //check it is a image
             if (substr($_FILES['image']['type'], 0,5) == "image") {
                 //set the type variale
-                $in['image_type'] = $_FILES['image']['type'];
-                
-                //read in the image
-                $fp = fopen($_FILES['image']['tmp_name'], 'r');
-                    $in['image'] = fread($fp, $_FILES['image']['size']);
-                fclose($fp);
+                $in['image_type'] = $_FILES['image']['type'];                
+                $this->dbmsC->updateFile("people", "image", file_get_contents($_FILES['image']['tmp_name']), "WHERE email='".$email."'");
+            }
+            else {
+                echo "<p>sorry, our system did not recognise your file as a image, please try using a jpg or png.</p>";
             }
         }
         /* check user exists*/
         if(!($this->dbmsC->recordExists("people", "email", $email))) return false;
         $result = $this->dbmsC->updateCols("people", $in, "email='".$email."'");
+        
         return $result;
     }
     /* function for dealing with lost passwords */   
