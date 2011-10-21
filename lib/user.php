@@ -53,7 +53,7 @@ class user
         $cookietime = $cookie['cookietime'];
         
         /* delete cookie data if cookie has timed out */
-        if(($cookietime < time()) && ($cookietime != 0)){
+        if(($cookietime > time()) || ($cookietime != 0)){
             $this->removeCookie($email);
             return false;
         }
@@ -69,7 +69,7 @@ class user
             ///store cookie data in database for verfication later.
             //change these to be one query for optimisation
             if( setcookie($this->cookiename, $saltedcookie, time()+$this->cookietimeout, "/", $_SERVER['SERVER_NAME'])) {
-                $this->dbmsC->updateCols("people", array("cookietime" => time() + $this->cookietimeout, "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "where email='".$email."'");
+                $this->dbmsC->updateCols("people", array("cookietime" => time() + $this->cookietimeout, "cookiehash" => $saltedcookie, "cookiesalt" => $cookiesalt), "email='".$email."'");
             }
             return 200;
         }
@@ -107,7 +107,7 @@ class user
         /* this still doesn't delete the cookie from the browser */
         $_COOKIE['synapse-valve'] = "";
         setcookie("synapse-valve", "", time() - 60000);
-        $this->dbmsC->updateCols("people", array("cookiehash" => "nudda", "cookietime" => 0), "where email='".$email."'");
+        $this->dbmsC->updateCols("people", array("cookiehash" => "nudda", "cookietime" => 0), "email='".$email."'");
     }
     
     /* Basic people listing */
