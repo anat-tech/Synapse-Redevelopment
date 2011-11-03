@@ -4,7 +4,7 @@
   * @author Cameron Milton cameron@anat.org.au
   * @copyright Australian Network for Art and Technology 27th May 2011
   * @version 1.0.1
-  * 
+  * TODO: implement PDO
 **/
 class dbmsCog
 {
@@ -15,10 +15,33 @@ class dbmsCog
     protected $link;
     protected $sqlErr;
     protected $rowCount;
+    protected $pdolink;
+    protected $connected = false;
+    
+    function __construct() {
+        $this->connect();
+        try {
+            $this->pdolink = new PDO("mysql: host=localhost; dbname=$this->database", $this->mysql_username, $this->mysql_pass);
+            if($this->connected);
+        }
+        catch(PDOException $e) {
+            return 400;
+            //file_put_contents('PDOErrors.txt', $e->getMessage(), FILE_APPEND);
+            echo "<p>".$e->getMessage()."</p>";
+        }
+        
+    }
+    
+    function __destruct() {
+        $this->disconnect();
+        unset($this->pdolink);
+         echo "<p>disconnected</p>";
+    }
     
     /* for making connections to the database */
     private function connect()
     {
+        echo "<p>connected</p>";
         $this->link = mysql_connect ('localhost', $this->mysql_username, $this->mysql_pass);
         /* returns if the connection was made, not the resource itself */
         if($this->link)
@@ -27,13 +50,14 @@ class dbmsCog
             $db_select = mysql_select_db($this->database, $this->link);
             if( $db_select)
             {
+                $this->connected = true;
                 return true;
             }
             /* failed to connect to database */
             else
             {
-                return false;
                 $this->sqlErr = mysql_error();
+                return false;
             }
         }
         /* failed to connect to dbms server*/
@@ -50,12 +74,25 @@ class dbmsCog
            return mysql_close($this->link);
     }
     
+    /* function for using PDO to execute queries*/
+    private function pdo_query($query) {
+        try {
+            if($this->connected);
+        }
+        catch(PDOException $e) {
+            return 400;
+            //file_put_contents('PDOErrors.txt', $e->getMessage(), FILE_APPEND);
+            echo "<p>".$e->getMessage()."</p>";
+        }
+    }
+    
     /* function for executing queries on the dbms */
     private function query($query)
     {
+        $this->pdo_query($query);
         $query .= ";";
         /* make connection */
-        if($this->connect())
+        if($this->connected)
         {       
             /* sanitize query */
             $query = stripslashes(mysql_real_escape_string($query, $this->link));
@@ -74,7 +111,7 @@ class dbmsCog
                 $this->rowCount = (mysql_num_rows($result));
                 return $result;
             }
-            $this->disconnect();
+            //$this->disconnect();
         }
         else return 503; //, database connection failed";
     }
@@ -130,6 +167,7 @@ class dbmsCog
     /* select function */
     function select($table, $colums, $conditions)
     {
+        
         /* require these parameters*/
         if(isset($table) && isset($colums))
         {
@@ -139,6 +177,8 @@ class dbmsCog
             $query .= ";";
             /* run query*/ 
             $outcome = $this->query($query);
+            
+            
             //print_r(mysql_fetch_assoc($outcome));
             if ($this->rowCount == 1) {
                 return mysql_fetch_assoc($outcome);

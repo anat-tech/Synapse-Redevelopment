@@ -16,6 +16,9 @@ class user
     {
         $this->dbmsC = new dbmsCog();
     }
+    public function __destruct() {
+        unset ($this->dbmsC);
+    }
     /* registerting people into the database */
     function register($fname, $lname, $email,$pass) {    
         // check email does not exist 
@@ -167,8 +170,16 @@ class user
             //check it is a image
             if (substr($_FILES['image']['type'], 0,5) == "image") {
                 //set the type variale
-                $in['image_type'] = $_FILES['image']['type'];                
-                $this->dbmsC->updateFile("people", "image", file_get_contents($_FILES['image']['tmp_name']), "WHERE email='".$email."'");
+                //$in['image_type'] = $_FILES['image']['type'];                
+                //$this->dbmsC->updateFile("people", "image", file_get_contents($_FILES['image']['tmp_name']), "WHERE email='".$email."'");
+                //file_put_contents
+                $fname = $_FILES['image']['name'];
+                $ext = ".".substr(strrchr($fname, '.'), 1);
+                $fname = $email.$ext;
+                $fname = dirname(__FILE__)."/images/profile/".$fname;
+                echo "<p>file: ".$fname."</p>";
+                file_put_contents($fname, file_get_contents($_FILES['images']['tmp_name']));
+                //echo "<p>content hash: ".sha1(file_get_contents($_FILES['image']['tmp_name']))."</p>";
             }
             else {
                 echo "<p>sorry, our system did not recognise your file as a image, please try using a jpg or png.</p>";

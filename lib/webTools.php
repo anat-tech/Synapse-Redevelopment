@@ -8,7 +8,7 @@ if((class_exists('webTools'))) return; //exit if class exists
 class webTools {
     public static function cleanArray() {
         foreach ($arr as $key => $value) {
-            // remove tags and strip mysql stuffs
+            // remove tags
             $arr[$key] = strip_tags($value);
         }
     }
